@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบรับรหัสคีย์ (Key System)</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            color: #f8fafc;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+        }
+        h2 {
+            margin-bottom: 10px;
+            font-size: 24px;
+            color: #38bdf8;
+        }
+        p {
+            color: #94a3b8;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        .btn {
+            background: #38bdf8;
+            color: #0f172a;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        .btn:hover {
+            background: #0ea5e9;
+            transform: translateY(-2px);
+        }
+        .result-box {
+            margin-top: 25px;
+            background: #0f172a;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px dashed #38bdf8;
+            display: none;
+        }
+        .key-text {
+            font-family: monospace;
+            font-size: 18px;
+            color: #4ade80;
+            margin-bottom: 10px;
+            word-break: break-all;
+        }
+        .copy-btn {
+            background: #334155;
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+        .copy-btn:hover {
+            background: #475569;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>ระบบรับรหัสคีย์</h2>
+        <p>คลิกปุ่มด้านล่างเพื่อรับรหัสคีย์ของคุณทันที ไม่มีโฆษณา ไม่ต้องทำภารกิจ</p>
+        
+        <button class="btn" onclick="generateKey()">รับรหัสคีย์</button>
+
+        <div class="result-box" id="resultBox">
+            <div class="key-text" id="keyDisplay">KEY-XXXX-XXXX-XXXX</div>
+            <button class="copy-btn" onclick="copyKey()">คัดลอกคีย์</button>
+        </div>
+    </div>
+
+    <script>
+        function generateKey() {
+            // สุ่มสร้างรหัสคีย์ตัวอย่าง
+            const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            let key = "KEY";
+            for (let i = 0; i < 3; i++) {
+                let segment = "";
+                for (let j = 0; j < 4; j++) {
+                    segment += chars.charAt(Math.floor(Math.random() * chars.length));
+                }
+                key += "-" + segment;
+            }
+
+            // แสดงผลคีย์
+            document.getElementById("keyDisplay").innerText = key;
+            document.getElementById("resultBox").style.display = "block";
+        }
+
+        function copyKey() {
+            const keyText = document.getElementById("keyDisplay").innerText;
+            navigator.clipboard.writeText(keyText).then(() => {
+                alert("คัดลอกรหัสคีย์เรียบร้อยแล้ว!");
+            });
+        }
+    </script>
+
+</body>
+</html>
