@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PM HUB - Key System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Gotham:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Gotham', sans-serif;
+        }
+
+        body {
+            background-color: #121216;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .login-card {
+            width: 320px;
+            background-color: #1e1e23;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+            border: 2px solid #7800f0;
+            animation: rgbBorder 6s linear infinite;
+        }
+
+        .title {
+            color: #f0f0f0;
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .logo-container {
+            margin-bottom: 20px;
+        }
+
+        .logo {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        input[type="text"] {
+            width: 85%;
+            padding: 12px;
+            background-color: #0f0f14;
+            border: 1px solid #3c3c46;
+            border-radius: 8px;
+            color: #e6e6e6;
+            font-size: 16px;
+            outline: none;
+            transition: border 0.3s;
+        }
+
+        input[type="text"]:focus {
+            border-color: #7800f0;
+            border-width: 2px;
+        }
+
+        input::placeholder {
+            color: #646464;
+        }
+
+        button {
+            width: 85%;
+            padding: 12px;
+            background: linear-gradient(90deg, #7800f0, #9b30ff);
+            border: none;
+            border-radius: 8px;
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        #statusText {
+            margin-top: 15px;
+            font-size: 14px;
+            color: #a0a0a0;
+        }
+
+        @keyframes rgbBorder {
+            0% { border-color: rgb(255, 0, 0); }
+            33% { border-color: rgb(0, 255, 0); }
+            66% { border-color: rgb(0, 0, 255); }
+            100% { border-color: rgb(255, 0, 0); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-card">
+        <h2 class="title">PM HUB - SECURE</h2>
+        
+        <div class="logo-container">
+            <img src="https://via.placeholder.com/45" alt="Logo" class="logo">
+        </div>
+
+        <div class="input-group">
+            <input type="text" id="keyInput" placeholder="Enter your key..." autocomplete="off">
+        </div>
+
+        <button id="submitBtn" onclick="verifyKey()">GET KEY / VERIFY</button>
+
+        <p id="statusText"></p>
+    </div>
+
+    <script>
+        const validKeys = ["123", "000", "PM-HUB-1", "PM-HUB-2"];
+
+        function verifyKey() {
+            const inputVal = document.getElementById("keyInput").value.trim();
+            const statusText = document.getElementById("statusText");
+            const submitBtn = document.getElementById("submitBtn");
+
+            if (inputVal === "") {
+                statusText.style.color = "#ff6b6b";
+                statusText.innerText = "Please enter a key!";
+                return;
+            }
+
+            if (validKeys.includes(inputVal)) {
+                statusText.style.color = "#51cf66";
+                statusText.innerText = "Success! You can now use this key in game.";
+                submitBtn.style.background = "#2b8a3e";
+                submitBtn.innerText = "VERIFIED";
+            } else {
+                statusText.style.color = "#ff6b6b";
+                statusText.innerText = "Incorrect Key! Please try again.";
+                submitBtn.style.background = "#c92a2a";
+                submitBtn.innerText = "INCORRECT";
+                
+                setTimeout(() => {
+                    submitBtn.style.background = "linear-gradient(90deg, #7800f0, #9b30ff)";
+                    submitBtn.innerText = "GET KEY / VERIFY";
+                }, 1800);
+            }
+        }
+    </script>
+</body>
+</html>
