@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบรับรหัสผ่าน - Key System</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #0f172a;
+            color: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: #1e293b;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            padding: 32px;
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+            border: 1px solid #334155;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #38bdf8;
+        }
+
+        .mission-box {
+            background-color: #0f172a;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 1px solid #1e293b;
+        }
+
+        .timer-display {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #f43f5e;
+            margin: 10px 0;
+        }
+
+        .timer-display.active {
+            color: #38bdf8;
+        }
+
+        .btn {
+            background-color: #0284c7;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.2s ease;
+        }
+
+        .btn:hover {
+            background-color: #0369a1;
+        }
+
+        .btn:disabled {
+            background-color: #475569;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .result-box {
+            margin-top: 24px;
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .result-box.show {
+            display: block;
+        }
+
+        .key-input-group {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .key-input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #475569;
+            background-color: #0f172a;
+            color: #4ade80;
+            font-family: monospace;
+            font-size: 1.1rem;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .btn-copy {
+            background-color: #16a34a;
+            width: auto;
+            padding: 0 16px;
+            white-space: nowrap;
+        }
+
+        .btn-copy:hover {
+            background-color: #15803d;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🔑 ระบบภารกิจรับรหัสผ่าน</h1>
+
+    <div class="mission-box">
+        <p>ทำภารกิจรอเวลาเพื่อปลดล็อกรหัสผ่าน</p>
+        <div class="timer-display" id="timer">30</div>
+        <p id="status-text" style="color: #94a3b8; font-size: 0.9rem;">กดปุ่มด้านล่างเพื่อเริ่มนับถอยหลัง</p>
+    </div>
+
+    <button class="btn" id="start-btn" onclick="startMission()">เริ่มต้นภารกิจ (รอ 30 วินาที)</button>
+
+    <div class="result-box" id="result-box">
+        <p style="color: #4ade80;">ภารกิจเสร็จสิ้น! รหัสผ่านของคุณคือ:</p>
+        <div class="key-input-group">
+            <input type="text" class="key-input" id="key-display" readonly>
+            <button class="btn btn-copy" onclick="copyKey()">คัดลอก</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let timeLeft = 30;
+    let timerInterval = null;
+
+    // ฟังก์ชันสุ่มรหัสผ่าน (สุ่มตัวอักษรพิมพ์ใหญ่ พิมพ์เล็ก ตัวเลข และสัญลักษณ์)
+    function generateRandomKey(length = 16) {
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
+        let result = 'KEY-';
+        for (let i = 0; i < length; i++) {
+            result += characters.charAt(Math.floor(Math.random() * characters.length));
+        }
+        return result;
+    }
+
+    // ฟังก์ชันเริ่มภารกิจนับถอยหลัง
+    function startMission() {
+        const startBtn = document.getElementById('start-btn');
+        const timerDisplay = document.getElementById('timer');
+        const statusText = document.getElementById('status-text');
+        const resultBox = document.getElementById('result-box');
+
+        // รีเซ็ตสถานะหน้าจอ
+        startBtn.disabled = true;
+        resultBox.classList.remove('show');
+        timeLeft = 30;
+        timerDisplay.innerText = timeLeft;
+        timerDisplay.classList.add('active');
+        statusText.innerText = "กำลังดำเนินภารกิจ กรุณารอจนกว่าจะครบเวลา...";
+
+        // เริ่มนับถอยหลังทุกๆ 1 วินาที
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            timerDisplay.innerText = timeLeft;
+
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                timerDisplay.classList.remove('active');
+                statusText.innerText = "สำเร็จแล้ว!";
+                
+                // สุ่มรหัสผ่านและนำไปแสดงผล
+                const generatedKey = generateRandomKey();
+                document.getElementById('key-display').value = generatedKey;
+                
+                // แสดงกล่องผลลัพธ์
+                resultBox.classList.add('show');
+                
+                // ปรับปุ่มให้ใช้งานได้อีกครั้ง
+                startBtn.disabled = false;
+                startBtn.innerText = "เริ่มภารกิจอีกครั้ง";
+            }
+        }, 1000);
+    }
+
+    // ฟังก์ชันคัดลอกรหัสผ่านไปยัง Clipboard
+    function copyKey() {
+        const keyInput = document.getElementById('key-display');
+        keyInput.select();
+        keyInput.setSelectionRange(0, 99999); // สำหรับรองรับมือถือ
+
+        navigator.clipboard.writeText(keyInput.value).then(() => {
+            alert("คัดลอกรหัสผ่านเรียบร้อยแล้ว: " + keyInput.value);
+        }).catch(err => {
+            alert("ไม่สามารถคัดลอกได้ กรุณาครอบดำและคัดลอกด้วยตนเอง");
+        });
+    }
+</script>
+
+</body>
+</html>
