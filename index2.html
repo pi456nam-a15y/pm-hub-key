@@ -3,129 +3,184 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบรับรหัสคีย์ (Key System)</title>
+    <title>PM HUB - Key System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Gotham:wght@400;700&display=swap" rel="stylesheet">
     <style>
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Gotham', sans-serif;
         }
+
         body {
-            background: linear-gradient(135deg, #0f172a, #1e293b);
-            color: #f8fafc;
-            min-height: 100vh;
+            background-color: #121216;
+            color: #f0f0f0;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 20px;
+            height: 100vh;
+            overflow: hidden;
         }
+
         .container {
-            background: rgba(30, 41, 59, 0.7);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 40px;
-            border-radius: 16px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-            width: 100%;
-            max-width: 450px;
+            width: 340px;
+            background-color: #1e1e23;
+            border-radius: 12px;
+            padding: 25px;
             text-align: center;
+            position: relative;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+            border: 2px solid transparent;
+            transition: border-color 0.3s ease;
         }
-        h2 {
-            margin-bottom: 10px;
-            font-size: 24px;
-            color: #38bdf8;
-        }
-        p {
-            color: #94a3b8;
-            margin-bottom: 30px;
-            font-size: 14px;
-        }
-        .btn {
-            background: #38bdf8;
-            color: #0f172a;
-            border: none;
-            padding: 12px 24px;
-            font-size: 16px;
+
+        .logo {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            margin: 0 auto 15px auto;
+            background: #7800f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-weight: bold;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            width: 100%;
+            font-size: 20px;
+            color: white;
         }
-        .btn:hover {
-            background: #0ea5e9;
-            transform: translateY(-2px);
+
+        h2 {
+            font-size: 20px;
+            margin-bottom: 20px;
+            letter-spacing: 1px;
         }
-        .result-box {
-            margin-top: 25px;
-            background: #0f172a;
+
+        .desc {
+            font-size: 14px;
+            color: #aaa;
+            margin-bottom: 20px;
+        }
+
+        .timer-box {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #fff;
+            background: #151514;
             padding: 15px;
             border-radius: 8px;
-            border: 1px dashed #38bdf8;
+            border: 1px solid #3c3c46;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .btn:disabled {
+            background-color: #333 !important;
+            color: #777;
+            cursor: not-allowed;
+        }
+
+        .key-display {
+            margin-top: 15px;
+            padding: 10px;
+            background: #151520;
+            border-radius: 8px;
+            border: 1px dashed #7800f0;
+            word-break: break-all;
+            font-size: 14px;
             display: none;
         }
-        .key-text {
-            font-family: monospace;
-            font-size: 18px;
-            color: #4ade80;
-            margin-bottom: 10px;
-            word-break: break-all;
-        }
+
         .copy-btn {
-            background: #334155;
-            color: #fff;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: background 0.2s;
-        }
-        .copy-btn:hover {
-            background: #475569;
+            margin-top: 10px;
+            background-color: #28a745;
+            display: none;
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h2>ระบบรับรหัสคีย์</h2>
-        <p>คลิกปุ่มด้านล่างเพื่อรับรหัสคีย์ของคุณทันที ไม่มีโฆษณา ไม่ต้องทำภารกิจ</p>
+    <div class="container" id="mainContainer">
+        <div class="logo">PM</div>
+        <h2>PM HUB - GET KEY</h2>
+        <p class="desc" id="statusText">กรุณารอสักครู่เพื่อให้ระบบสร้างคีย์...</p>
         
-        <button class="btn" onclick="generateKey()">รับรหัสคีย์</button>
+        <div class="timer-box" id="timer">30</div>
 
-        <div class="result-box" id="resultBox">
-            <div class="key-text" id="keyDisplay">KEY-XXXX-XXXX-XXXX</div>
-            <button class="copy-btn" onclick="copyKey()">คัดลอกคีย์</button>
-        </div>
+        <button class="btn" id="actionBtn" disabled>กำลังทำภารกิจ...</button>
+        
+        <div class="key-display" id="keyDisplay"></div>
+        <button class="btn copy-btn" id="copyBtn" onclick="copyKey()">คัดลอกคีย์</button>
     </div>
 
     <script>
-        function generateKey() {
-            // สุ่มสร้างรหัสคีย์ตัวอย่าง
-            const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-            let key = "KEY";
-            for (let i = 0; i < 3; i++) {
-                let segment = "";
-                for (let j = 0; j < 4; j++) {
-                    segment += chars.charAt(Math.floor(Math.random() * chars.length));
-                }
-                key += "-" + segment;
+        let timeLeft = 30;
+        const timerElement = document.getElementById("timer");
+        const actionBtn = document.getElementById("actionBtn");
+        const statusText = document.getElementById("statusText");
+        const keyDisplay = document.getElementById("keyDisplay");
+        const copyBtn = document.getElementById("copyBtn");
+        const container = document.getElementById("mainContainer");
+
+        // ระบบนับถอยหลัง
+        let countdown = setInterval(() => {
+            timeLeft--;
+            timerElement.textContent = timeLeft;
+
+            if (timeLeft <= 0) {
+                clearInterval(countdown);
+                timerElement.textContent = "สำเร็จ!";
+                statusText.textContent = "กดปุ่มด้านล่างเพื่อรับคีย์ของคุณ";
+                actionBtn.disabled = false;
+                actionBtn.textContent = "รับคีย์ (GET KEY)";
+                actionBtn.style.background = "linear-gradient(90deg, #7800f0, #a832ff)";
             }
+        }, 1000);
 
-            // แสดงผลคีย์
-            document.getElementById("keyDisplay").innerText = key;
-            document.getElementById("resultBox").style.display = "block";
-        }
+        // ฟังก์ชันสุ่มสร้าง Key เมื่อกดปุ่ม
+        actionBtn.addEventListener("click", () => {
+            if (timeLeft <= 0) {
+                const generatedKey = "PM-HUB-" + Math.random().toString(36).substring(2, 10).toUpperCase() + "-" + Math.floor(Math.random() * 8999 + 1000);
+                
+                keyDisplay.textContent = generatedKey;
+                keyDisplay.style.display = "block";
+                copyBtn.style.display = "block";
+                
+                actionBtn.textContent = "สร้างคีย์สำเร็จแล้ว";
+                actionBtn.disabled = true;
+                actionBtn.style.background = "#333";
+            }
+        });
 
+        // ฟังก์ชันคัดลอกคีย์
         function copyKey() {
-            const keyText = document.getElementById("keyDisplay").innerText;
+            const keyText = keyDisplay.textContent;
             navigator.clipboard.writeText(keyText).then(() => {
-                alert("คัดลอกรหัสคีย์เรียบร้อยแล้ว!");
+                copyBtn.textContent = "คัดลอกสำเร็จ!";
+                setTimeout(() => {
+                    copyBtn.textContent = "คัดลอกคีย์";
+                }, 2000);
             });
         }
-    </script>
 
+        // เอฟเฟกต์ RGB กรอบเว็บไซต์ (จำลองตามโค้ด Roblox ของคุณ)
+        let hue = 0;
+        function updateRGB() {
+            hue = (hue + 0.5) % 360;
+            container.style.borderColor = `hsl(${hue}, 85%, 60%)`;
+            requestAnimationFrame(updateRGB);
+        }
+        updateRGB();
+    </script>
 </body>
 </html>
